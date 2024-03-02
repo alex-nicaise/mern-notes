@@ -1,8 +1,18 @@
-const getUsers = (req, res) => {
-  res.status(200).json({ message: "Get users!" });
+const { sql } = require("../database/db");
+
+const getUser = async (req, res) => {
+  try {
+    const user = await sql`
+    SELECT name, email
+    FROM users
+    WHERE id = ${req.params.id}`;
+    res.status(200).send(user);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const setUsers = (req, res) => {
+const setUser = (req, res) => {
   res.status(200).json({ message: "Set users!" });
 };
 
@@ -14,4 +24,4 @@ const deleteUser = (req, res) => {
   res.status(200).json({ message: `Deleted user ${req.params.id}!` });
 };
 
-module.exports = { getUsers, setUsers, updateUser, deleteUser };
+module.exports = { getUser, setUser, updateUser, deleteUser };
