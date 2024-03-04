@@ -7,11 +7,9 @@ const {
 } = require("../controllers/usersController");
 const router = express.Router();
 
-router
-  .route("/:id")
-  .get(getUser)
-  .post(setUser)
-  .put(updateUser)
-  .delete(deleteUser);
+router.route("/").get(getUser);
+router.route("/create").post(setUser);
+router.route("/update").put(updateUser);
+router.route("/delete").delete(deleteUser);
 
 module.exports = router;

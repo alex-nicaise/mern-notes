@@ -1,4 +1,4 @@
-const { sql } = require("../database/db");
+const { sql, supabase } = require("../database/db");
 
 const getUser = async (req, res) => {
   try {
@@ -12,8 +12,18 @@ const getUser = async (req, res) => {
   }
 };
 
-const setUser = (req, res) => {
-  res.status(200).json({ message: "Set users!" });
+const setUser = async (req, res) => {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: req.body.email,
+      password: req.body.password,
+    });
+
+    console.log(data, error);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const updateUser = (req, res) => {
