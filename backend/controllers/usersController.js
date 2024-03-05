@@ -1,4 +1,5 @@
 const { sql, supabase } = require("../database/db");
+const { z } = require("zod");
 
 const getUser = async (req, res) => {
   try {
@@ -13,16 +14,37 @@ const getUser = async (req, res) => {
 };
 
 const setUser = async (req, res) => {
+  const signUpSchema = z.object({
+    email: z.string().email({ message: "Enter a valid email." }),
+    password: z.string().min(10, "Password should be at least 10 characters."),
+  });
+
+  const validatedFields = signUpSchema.safeParse({
+    email: req.body.email,
+    password: req.body.password,
+  });
+
+  if (!validatedFields.success) {
+    throw new Error("Invalid fields!");
+  }
+
   try {
     const { data, error } = await supabase.auth.signUp({
       email: req.body.email,
       password: req.body.password,
     });
 
-    console.log(data, error);
-    return data;
+    if (error) {
+      throw error;
+    }
+
+    res.status(200).send(data);
   } catch (error) {
-    console.log(error);
+    if (error.name === "AuthApiError") {
+      res.status(400).send(error);
+    } else {
+      res.status(500).send(error);
+    }
   }
 };
 

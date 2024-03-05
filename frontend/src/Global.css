@@ -1,5 +1,49 @@
+@import "./pages/Sign-Up/sign-up.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
+}
+
+html {
+  color-scheme: dark light;
+}
+
+html,
+body,
+#root {
+  width: 100dvw;
+  height: 100dvh;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+
+  :root {
+    --bg-color: #111;
+    --text-color: #cfcfcf;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: light;
+  }
+
+  :root {
+    --bg-color: #cfcfcf;
+    --text-color: #111;
+  }
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
 }
