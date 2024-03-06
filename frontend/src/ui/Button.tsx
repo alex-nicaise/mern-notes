@@ -5,19 +5,22 @@ const Button = ({
   type,
   alt,
   extraClasses,
+  disabled,
 }: {
   children: React.ReactNode;
   type?: "submit" | "reset" | "button" | undefined;
   alt: string;
   extraClasses?: string;
+  disabled?: boolean;
 }) => {
   if (alt === "primary") {
     return (
       <button
         type={type}
-        className={`bg-emerald-500 hover:bg-emerald-400 w-fit py-2 px-4 text-white rounded-full ${extraClasses}`}
+        disabled={disabled}
+        className={`bg-emerald-500 hover:bg-emerald-400 py-2 px-4 text-white text-center rounded-full disabled:opacity-75 ${extraClasses}`}
       >
-        {children}
+        {disabled ? "Submitting..." : children}
       </button>
     );
   } else {

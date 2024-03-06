@@ -12,7 +12,7 @@ const Card = ({
   return (
     <div
       id={id}
-      className={`border border-gray-300 flex flex-col justify-center items-center rounded-lg ${extraClasses}`}
+      className={`border border-gray-300 flex flex-col w-full justify-center items-center rounded-lg ${extraClasses}`}
     >
       {children}
     </div>

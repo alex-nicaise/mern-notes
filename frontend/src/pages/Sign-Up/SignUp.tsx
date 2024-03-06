@@ -1,38 +1,23 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { z } from "zod";
 import FormError from "../../ui/FormError";
 import Card from "../../ui/Card";
 import Button from "../../ui/Button";
-import { useServerMessages } from "../../context/ServerMessageContext";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
-
-const signUpSchema = z
-  .object({
-    email: z.string().email({ message: "Enter a valid email." }),
-    password: z.string().min(10, "Password should be at least 10 characters."),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password == data.confirmPassword, {
-    message: "Passwords must match.",
-    path: ["confirmPassword"],
-  });
-
-type signUpErrors = {
-  email?: string[] | undefined;
-  password?: string[] | undefined;
-  confirmPassword?: string[] | undefined;
-};
+import LabelInput from "../../ui/LabelInput";
+import { signUpErrors, signUpSchema } from "./sign-up-schemas";
 
 const SignUp = () => {
-  const [zodErrors, setZodErrors] = useState<signUpErrors>({});
-  const { serverMessage, setServerMessage } = useServerMessages();
+  const [signUpState, setSignUpState] = useState<signUpErrors>({
+    zodErrors: {},
+    serverMessage: "",
+    loading: false,
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
-    setZodErrors({});
-    setServerMessage("");
+    setSignUpState({ zodErrors: {}, serverMessage: "", loading: true });
 
     const { email, password, confirmPassword } = e.currentTarget;
 
@@ -46,8 +31,13 @@ const SignUp = () => {
     const validatedFields = signUpSchema.safeParse(data);
 
     if (!validatedFields.success) {
-      setZodErrors(validatedFields.error.flatten().fieldErrors);
-      return;
+      return setSignUpState((prev) => {
+        return {
+          ...prev,
+          zodErrors: validatedFields.error.flatten().fieldErrors,
+          loading: false,
+        };
+      });
     }
 
     // Send to api action
@@ -68,11 +58,23 @@ const SignUp = () => {
       }
 
       // Set server message to success if no status code issues
-      setServerMessage("Success!");
+      return setSignUpState((prev) => {
+        return {
+          ...prev,
+          serverMessage: "Success!",
+          loading: false,
+        };
+      });
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
-        setServerMessage(error.message);
+        return setSignUpState((prev) => {
+          return {
+            ...prev,
+            serverMessage: error.message,
+            loading: false,
+          };
+        });
       } else {
         return;
       }
@@ -84,60 +86,66 @@ const SignUp = () => {
       id="sign-in-section"
       className="w-full h-full flex justify-center items-center"
     >
-      <Card extraClasses="py-16 px-8">
+      <Card extraClasses="py-16 px-8 max-w-md">
         <h1 className="font-bold text-lg">Create an Account</h1>
         <form
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}
           className="w-full flex flex-col mt-8"
         >
-          <label htmlFor="email" className="text-sm mt-3">
-            Email
-          </label>
-          <input
-            type="text"
+          <LabelInput
             name="email"
-            className="w-full mt-1 p-1 px-3 border border-gray-300 rounded"
+            type="text"
+            label="Email"
+            placeholder="joe@example.com"
+            disabled={signUpState.loading}
           />
-          {zodErrors && <FormError>{zodErrors.email}</FormError>}
-
-          <label htmlFor="password" className="text-sm mt-3">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            className="w-full mt-1 p-1 px-3 border border-gray-300 rounded"
-          />
-          {zodErrors?.password &&
-            zodErrors.password.map((err, index) => {
-              return <FormError key={index}>{err}</FormError>;
-            })}
-
-          <label htmlFor="confirmPassword" className="text-sm mt-3">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            className="w-full mt-1 py-1 px-3 border border-gray-300 rounded"
-          />
-          {zodErrors?.confirmPassword &&
-            zodErrors.confirmPassword.map((err, index) => {
-              return <FormError key={index}>{err}</FormError>;
-            })}
-
-          {serverMessage === "Success!" ? (
-            <ServerFeedbackDiv alt="success" />
-          ) : serverMessage === "" ? null : (
-            <ServerFeedbackDiv />
+          {signUpState.zodErrors && (
+            <FormError>{signUpState.zodErrors.email}</FormError>
           )}
 
-          <Button alt="primary" type="submit" extraClasses="mx-auto mt-8">
+          <LabelInput
+            name="password"
+            type="password"
+            label="Password"
+            placeholder="Your password..."
+            disabled={signUpState.loading}
+          />
+          {signUpState.zodErrors && (
+            <FormError>{signUpState.zodErrors.password}</FormError>
+          )}
+
+          <LabelInput
+            name="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            placeholder="Confirm password..."
+            disabled={signUpState.loading}
+          />
+          {signUpState.zodErrors.confirmPassword &&
+            signUpState.zodErrors.confirmPassword.map((err, index) => {
+              return <FormError key={index}>{err}</FormError>;
+            })}
+
+          {signUpState.serverMessage === "Success!" ? (
+            <ServerFeedbackDiv
+              alt="success"
+              message={signUpState.serverMessage}
+            />
+          ) : signUpState.serverMessage === "" ? null : (
+            <ServerFeedbackDiv message={signUpState.serverMessage} />
+          )}
+
+          <Button
+            alt="primary"
+            type="submit"
+            extraClasses="mx-auto mt-8 w-full"
+            disabled={signUpState.loading}
+          >
             Submit
           </Button>
         </form>
-        <p className="mt-4">
-          Already have an account?{" "}
+        <p className="mt-4 text-center">
+          Already have an account? <br />
           <Link to="/" className="underline">
             Sign In Here
           </Link>
