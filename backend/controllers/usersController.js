@@ -1,59 +1,77 @@
 const { sql, supabase } = require("../database/db");
 const { z } = require("zod");
 
-const getUser = async (req, res) => {
-  try {
-    const user = await sql`
-    SELECT name, email
-    FROM users
-    WHERE id = ${req.params.id}`;
-    res.status(200).send(user);
-  } catch (error) {
-    console.log(error);
-  }
-};
+// Create zod Schema
+const signInUpFormSchema = z.object({
+  email: z.string().email({ message: "Enter a valid email." }),
+  password: z.string().min(10, "Password should be at least 10 characters."),
+});
 
-const setUser = async (req, res) => {
-  const signUpSchema = z.object({
-    email: z.string().email({ message: "Enter a valid email." }),
-    password: z.string().min(10, "Password should be at least 10 characters."),
-  });
-
-  const validatedFields = signUpSchema.safeParse({
-    email: req.body.email,
-    password: req.body.password,
+// Validate fields with Zod Schema
+const validateFields = (email, password) => {
+  const validatedFields = signInUpFormSchema.safeParse({
+    email: email,
+    password: password,
   });
 
   if (!validatedFields.success) {
     throw new Error("Invalid fields!");
   }
+};
 
+// Validate user based on action (Reusable Function)
+const validateUser = async (supabaseFunction, res) => {
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email: req.body.email,
-      password: req.body.password,
-    });
+    const { data, error } = await supabaseFunction;
 
     if (error) {
       throw error;
     }
 
-    res.status(200).send(data);
+    return res.status(200).send(data);
   } catch (error) {
     if (error.name === "AuthApiError") {
-      res.status(400).send(error);
+      return res.status(400).send(error);
     } else {
-      res.status(500).send(error);
+      return res.status(500).send(error);
     }
   }
 };
 
+// Get user from database for Login
+const loginUser = async (req, res) => {
+  validateFields(req.body.email, req.body.password);
+
+  return validateUser(
+    supabase.auth.signInWithPassword({
+      email: req.body.email,
+      password: req.body.password,
+    }),
+    res
+  );
+};
+
+// Insert user into database
+const setUser = async (req, res) => {
+  validateFields(req.body.email, req.body.password);
+
+  return validateUser(
+    supabase.auth.signUp({
+      email: req.body.email,
+      password: req.body.password,
+    }),
+    res
+  );
+};
+
+// Update user in database
 const updateUser = (req, res) => {
   res.status(200).json({ message: `Updated user ${req.params.id}!` });
 };
 
+// Delete user account
 const deleteUser = (req, res) => {
   res.status(200).json({ message: `Deleted user ${req.params.id}!` });
 };
 
-module.exports = { getUser, setUser, updateUser, deleteUser };
+module.exports = { loginUser, setUser, updateUser, deleteUser };

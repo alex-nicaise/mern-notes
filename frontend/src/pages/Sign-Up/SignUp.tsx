@@ -45,7 +45,9 @@ const SignUp = () => {
 
     // Send to api action
     try {
-      const request = await fetch("http://localhost:4000/api/users/create", {
+      // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
+      const url = "http://localhost:4000/api/users/create";
+      const request = await fetch(url, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -66,7 +68,7 @@ const SignUp = () => {
       return setSignUpState((prev) => {
         return {
           ...prev,
-          serverMessage: "Success!",
+          serverMessage: "Success! Please check your email!",
         };
       });
     } catch (error) {
@@ -131,7 +133,7 @@ const SignUp = () => {
               return <FormError key={index}>{err}</FormError>;
             })}
 
-          {signUpState.serverMessage === "Success!" ? (
+          {signUpState.serverMessage === "Success! Please check your email!" ? (
             <ServerFeedbackDiv
               alt="success"
               message={signUpState.serverMessage}

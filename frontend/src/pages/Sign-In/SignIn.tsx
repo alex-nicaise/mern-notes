@@ -43,8 +43,11 @@ const SignIn = () => {
 
     // Send to api action
     try {
-      const request = await fetch("http://localhost:4000/api/users/", {
-        method: "GET",
+      // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
+      const url = "http://localhost:4000/api/users/login";
+
+      const request = await fetch(url, {
+        method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
@@ -60,13 +63,8 @@ const SignIn = () => {
 
       // Set Loading to false
       setLoading(false);
-      // Set server message to success if no status code issues
-      return setsignInState((prev) => {
-        return {
-          ...prev,
-          serverMessage: "Success!",
-        };
-      });
+
+      console.log("Signed In!: ", response);
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
