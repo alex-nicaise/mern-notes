@@ -5,19 +5,22 @@ import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
-import { signUpErrors, signUpSchema } from "./sign-up-schemas";
+import { signUpState, signUpSchema } from "./sign-up-schemas";
+import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 
 const SignUp = () => {
-  const [signUpState, setSignUpState] = useState<signUpErrors>({
+  const [signUpState, setSignUpState] = useState<signUpState>({
     zodErrors: {},
     serverMessage: "",
-    loading: false,
   });
+
+  const { loading, setLoading } = useLoadingContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
-    setSignUpState({ zodErrors: {}, serverMessage: "", loading: true });
+    setSignUpState({ zodErrors: {}, serverMessage: "" });
+    setLoading(true);
 
     const { email, password, confirmPassword } = e.currentTarget;
 
@@ -31,11 +34,11 @@ const SignUp = () => {
     const validatedFields = signUpSchema.safeParse(data);
 
     if (!validatedFields.success) {
+      setLoading(false);
       return setSignUpState((prev) => {
         return {
           ...prev,
           zodErrors: validatedFields.error.flatten().fieldErrors,
-          loading: false,
         };
       });
     }
@@ -57,25 +60,27 @@ const SignUp = () => {
         throw new Error(response.message);
       }
 
+      // Set Loading to false
+      setLoading(false);
       // Set server message to success if no status code issues
       return setSignUpState((prev) => {
         return {
           ...prev,
           serverMessage: "Success!",
-          loading: false,
         };
       });
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
+        setLoading(false);
         return setSignUpState((prev) => {
           return {
             ...prev,
             serverMessage: error.message,
-            loading: false,
           };
         });
       } else {
+        setLoading(false);
         return;
       }
     }
@@ -97,7 +102,7 @@ const SignUp = () => {
             type="text"
             label="Email"
             placeholder="joe@example.com"
-            disabled={signUpState.loading}
+            disabled={loading}
           />
           {signUpState.zodErrors && (
             <FormError>{signUpState.zodErrors.email}</FormError>
@@ -108,7 +113,7 @@ const SignUp = () => {
             type="password"
             label="Password"
             placeholder="Your password..."
-            disabled={signUpState.loading}
+            disabled={loading}
           />
           {signUpState.zodErrors && (
             <FormError>{signUpState.zodErrors.password}</FormError>
@@ -119,7 +124,7 @@ const SignUp = () => {
             type="password"
             label="Confirm Password"
             placeholder="Confirm password..."
-            disabled={signUpState.loading}
+            disabled={loading}
           />
           {signUpState.zodErrors.confirmPassword &&
             signUpState.zodErrors.confirmPassword.map((err, index) => {
@@ -139,7 +144,7 @@ const SignUp = () => {
             alt="primary"
             type="submit"
             extraClasses="mx-auto mt-8 w-full"
-            disabled={signUpState.loading}
+            disabled={loading}
           >
             Submit
           </Button>
