@@ -14,13 +14,13 @@ const SignUp = () => {
     serverMessage: "",
   });
 
-  const { loading, setLoading } = useLoadingContext();
+  const { isLoading, setIsLoading } = useLoadingContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
     setSignUpState({ zodErrors: {}, serverMessage: "" });
-    setLoading(true);
+    setIsLoading(true);
 
     const { email, password, confirmPassword } = e.currentTarget;
 
@@ -34,7 +34,7 @@ const SignUp = () => {
     const validatedFields = signUpSchema.safeParse(data);
 
     if (!validatedFields.success) {
-      setLoading(false);
+      setIsLoading(false);
       return setSignUpState((prev) => {
         return {
           ...prev,
@@ -63,7 +63,7 @@ const SignUp = () => {
       }
 
       // Set Loading to false
-      setLoading(false);
+      setIsLoading(false);
       // Set server message to success if no status code issues
       return setSignUpState((prev) => {
         return {
@@ -74,7 +74,7 @@ const SignUp = () => {
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
-        setLoading(false);
+        setIsLoading(false);
         return setSignUpState((prev) => {
           return {
             ...prev,
@@ -82,7 +82,7 @@ const SignUp = () => {
           };
         });
       } else {
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
     }
@@ -104,7 +104,7 @@ const SignUp = () => {
             type="text"
             label="Email"
             placeholder="joe@example.com"
-            disabled={loading}
+            disabled={isLoading}
           />
           {signUpState.zodErrors && (
             <FormError>{signUpState.zodErrors.email}</FormError>
@@ -115,7 +115,7 @@ const SignUp = () => {
             type="password"
             label="Password"
             placeholder="Your password..."
-            disabled={loading}
+            disabled={isLoading}
           />
           {signUpState.zodErrors && (
             <FormError>{signUpState.zodErrors.password}</FormError>
@@ -126,7 +126,7 @@ const SignUp = () => {
             type="password"
             label="Confirm Password"
             placeholder="Confirm password..."
-            disabled={loading}
+            disabled={isLoading}
           />
           {signUpState.zodErrors.confirmPassword &&
             signUpState.zodErrors.confirmPassword.map((err, index) => {
@@ -146,7 +146,7 @@ const SignUp = () => {
             alt="primary"
             type="submit"
             extraClasses="mx-auto mt-8 w-full"
-            disabled={loading}
+            disabled={isLoading}
           >
             Submit
           </Button>

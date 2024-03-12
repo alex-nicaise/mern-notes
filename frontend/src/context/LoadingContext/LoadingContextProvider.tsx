@@ -1,8 +1,8 @@
 import { createContext, useState } from "react";
 
 type LoadingContextType = {
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const LoadingContext = createContext<LoadingContextType | false>(false);
@@ -12,10 +12,10 @@ export const LoadingContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <LoadingContext.Provider value={{ loading, setLoading }}>
+    <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
       {children}
     </LoadingContext.Provider>
   );

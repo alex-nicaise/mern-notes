@@ -13,13 +13,13 @@ const SignIn = () => {
     zodErrors: {},
     serverMessage: "",
   });
-  const { loading, setLoading } = useLoadingContext();
+  const { isLoading, setIsLoading } = useLoadingContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
     setsignInState({ zodErrors: {}, serverMessage: "" });
-    setLoading(true);
+    setIsLoading(true);
 
     const { email, password } = e.currentTarget;
 
@@ -32,7 +32,7 @@ const SignIn = () => {
     const validatedFields = signInSchema.safeParse(data);
 
     if (!validatedFields.success) {
-      setLoading(false);
+      setIsLoading(false);
       return setsignInState((prev) => {
         return {
           ...prev,
@@ -62,13 +62,13 @@ const SignIn = () => {
       }
 
       // Set Loading to false
-      setLoading(false);
+      setIsLoading(false);
 
       console.log("Signed In!: ", response);
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
-        setLoading(false);
+        setIsLoading(false);
         return setsignInState((prev) => {
           return {
             ...prev,
@@ -76,7 +76,7 @@ const SignIn = () => {
           };
         });
       } else {
-        setLoading(false);
+        setIsLoading(false);
         return;
       }
     }
@@ -98,7 +98,7 @@ const SignIn = () => {
             type="text"
             label="Email"
             placeholder="joe@example.com"
-            disabled={loading}
+            disabled={isLoading}
           />
           {signInState.zodErrors && (
             <FormError>{signInState.zodErrors.email}</FormError>
@@ -109,7 +109,7 @@ const SignIn = () => {
             type="password"
             label="Password"
             placeholder="Your password..."
-            disabled={loading}
+            disabled={isLoading}
           />
           {signInState.zodErrors && (
             <FormError>{signInState.zodErrors.password}</FormError>
@@ -128,7 +128,7 @@ const SignIn = () => {
             alt="primary"
             type="submit"
             extraClasses="mx-auto mt-8 w-full"
-            disabled={loading}
+            disabled={isLoading}
           >
             Submit
           </Button>
