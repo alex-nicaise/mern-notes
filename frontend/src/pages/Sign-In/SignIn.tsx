@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormError from "../../ui/FormError";
 import Card from "../../ui/Card";
 import Button from "../../ui/Button";
@@ -7,8 +7,10 @@ import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
 import { signInState, signInSchema } from "./sign-in-schemas";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
+import { setStorage } from "../../utils/setStorage";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [signInState, setsignInState] = useState<signInState>({
     zodErrors: {},
     serverMessage: "",
@@ -64,7 +66,11 @@ const SignIn = () => {
       // Set Loading to false
       setIsLoading(false);
 
-      console.log("Signed In!: ", response);
+      // Set local storage for auth
+      setStorage(JSON.stringify(response));
+
+      // Navigate to dashboard
+      navigate("/dashboard");
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
