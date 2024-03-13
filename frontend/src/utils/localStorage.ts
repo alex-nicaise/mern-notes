@@ -6,6 +6,16 @@ export const setStorage = (token: string) => {
   }
 };
 
+export const getStorage = () => {
+  if (localStorage.getItem("user")) {
+    const user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+  }
+  return null;
+};
+
 export const removeStorage = () => {
   if (localStorage.getItem("user")) {
     localStorage.removeItem("user");

@@ -7,7 +7,7 @@ import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
 import { signInState, signInSchema } from "./sign-in-schemas";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
-import { setStorage } from "../../utils/setStorage";
+import { setStorage } from "../../utils/localStorage";
 
 const SignIn = () => {
   const navigate = useNavigate();
