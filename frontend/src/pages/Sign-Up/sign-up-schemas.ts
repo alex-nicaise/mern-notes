@@ -11,11 +11,8 @@ export const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export type signUpState = {
-  zodErrors: {
-    email?: string[] | undefined;
-    password?: string[] | undefined;
-    confirmPassword?: string[] | undefined;
-  };
-  serverMessage: string;
+export type zodErrorsType = {
+  email?: string[] | undefined;
+  password?: string[] | undefined;
+  confirmPassword?: string[] | undefined;
 };

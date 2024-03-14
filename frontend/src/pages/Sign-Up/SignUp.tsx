@@ -5,21 +5,19 @@ import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
-import { signUpState, signUpSchema } from "./sign-up-schemas";
+import { signUpSchema, zodErrorsType } from "./sign-up-schemas";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 
 const SignUp = () => {
-  const [signUpState, setSignUpState] = useState<signUpState>({
-    zodErrors: {},
-    serverMessage: "",
-  });
-
+  const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
+  const [serverMessage, setServerMessage] = useState<string>("");
   const { isLoading, setIsLoading } = useLoadingContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
-    setSignUpState({ zodErrors: {}, serverMessage: "" });
+    setZodErrors({});
+    setServerMessage("");
     setIsLoading(true);
 
     const { email, password, confirmPassword } = e.currentTarget;
@@ -35,12 +33,7 @@ const SignUp = () => {
 
     if (!validatedFields.success) {
       setIsLoading(false);
-      return setSignUpState((prev) => {
-        return {
-          ...prev,
-          zodErrors: validatedFields.error.flatten().fieldErrors,
-        };
-      });
+      setZodErrors(validatedFields.error.flatten().fieldErrors);
     }
 
     // Send to api action
@@ -58,33 +51,22 @@ const SignUp = () => {
 
       const response = await request.json();
 
-      if (response.status === 400 || response.status === 500) {
-        throw new Error(response.message);
+      if (request.status !== 200) {
+        throw new Error(response.error);
       }
 
       // Set Loading to false
       setIsLoading(false);
       // Set server message to success if no status code issues
-      return setSignUpState((prev) => {
-        return {
-          ...prev,
-          serverMessage: "Success! Please check your email!",
-        };
-      });
+      setServerMessage(response.message);
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
         setIsLoading(false);
-        return setSignUpState((prev) => {
-          return {
-            ...prev,
-            serverMessage: error.message,
-          };
-        });
-      } else {
-        setIsLoading(false);
-        return;
+        setServerMessage(error.message);
       }
+      setIsLoading(false);
+      return;
     }
   };
 
@@ -106,9 +88,7 @@ const SignUp = () => {
             placeholder="joe@example.com"
             disabled={isLoading}
           />
-          {signUpState.zodErrors && (
-            <FormError>{signUpState.zodErrors.email}</FormError>
-          )}
+          {zodErrors && <FormError>{zodErrors.email}</FormError>}
 
           <LabelInput
             name="password"
@@ -117,9 +97,7 @@ const SignUp = () => {
             placeholder="Your password..."
             disabled={isLoading}
           />
-          {signUpState.zodErrors && (
-            <FormError>{signUpState.zodErrors.password}</FormError>
-          )}
+          {zodErrors && <FormError>{zodErrors.password}</FormError>}
 
           <LabelInput
             name="confirmPassword"
@@ -128,18 +106,17 @@ const SignUp = () => {
             placeholder="Confirm password..."
             disabled={isLoading}
           />
-          {signUpState.zodErrors.confirmPassword &&
-            signUpState.zodErrors.confirmPassword.map((err, index) => {
+          {zodErrors.confirmPassword &&
+            zodErrors.confirmPassword.map((err: string, index: number) => {
               return <FormError key={index}>{err}</FormError>;
             })}
 
-          {signUpState.serverMessage === "Success! Please check your email!" ? (
-            <ServerFeedbackDiv
-              alt="success"
-              message={signUpState.serverMessage}
-            />
-          ) : signUpState.serverMessage === "" ? null : (
-            <ServerFeedbackDiv message={signUpState.serverMessage} />
+          {serverMessage === "User created" ? (
+            <ServerFeedbackDiv alt="success" message={serverMessage} />
+          ) : serverMessage === "" ? (
+            ""
+          ) : (
+            <ServerFeedbackDiv message={serverMessage} />
           )}
 
           <Button

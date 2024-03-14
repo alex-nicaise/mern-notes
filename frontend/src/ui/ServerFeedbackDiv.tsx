@@ -9,7 +9,7 @@ const ServerFeedbackDiv = ({
 }) => {
   if (alt === "success") {
     return (
-      <div className="flex text-lg bg-blue-500 text-blue-900 py-1 px-4 mt-3 rounded-lg justify-center items-center">
+      <div className="flex bg-blue-500 text-blue-900 py-1 px-4 mt-3 rounded-lg justify-center items-center">
         <LuCheckCircle className="text-xl mr-1" /> {message}
       </div>
     );
