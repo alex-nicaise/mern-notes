@@ -34,7 +34,7 @@ const signInUser = asyncHandler(async (req, res) => {
     const token = generateJWT(userInDatabase[0].user_id);
     res.status(200).send({ message: "User authenticated", token: token });
   } catch (error) {
-    res.status(400).send({ message: error.message });
+    res.status(400).send({ error: error.message });
   }
 });
 

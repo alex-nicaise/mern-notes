@@ -5,8 +5,9 @@ import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
-import { signUpSchema, zodErrorsType } from "./sign-up-schemas";
+import { zodErrorsType } from "../../utils/validateForms";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
+import { validateForms } from "../../utils/validateForms";
 
 const SignUp = () => {
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
@@ -16,8 +17,8 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
-    setZodErrors({});
     setServerMessage("");
+    setZodErrors({});
     setIsLoading(true);
 
     const { email, password, confirmPassword } = e.currentTarget;
@@ -28,12 +29,13 @@ const SignUp = () => {
       confirmPassword: confirmPassword.value,
     };
 
-    // Parse input data for validation
-    const validatedFields = signUpSchema.safeParse(data);
+    // Validate input fields
+    const { errors } = validateForms("signUp", data);
 
-    if (!validatedFields.success) {
+    if (Object.keys(errors).length > 0) {
       setIsLoading(false);
-      setZodErrors(validatedFields.error.flatten().fieldErrors);
+      setZodErrors(errors);
+      return;
     }
 
     // Send to api action
