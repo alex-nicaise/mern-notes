@@ -6,4 +6,10 @@ const generateJWT = (id) => {
   });
 };
 
-module.exports = { generateJWT };
+const generateRefreshJWT = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
+
+module.exports = { generateJWT, generateRefreshJWT };

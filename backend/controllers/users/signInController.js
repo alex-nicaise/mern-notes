@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { validateFields } = require("./validateUser");
 const { sql } = require("../../database/db");
 const bcrypt = require("bcrypt");
-const { generateJWT } = require("../../auth/generateJWT");
+const { generateJWT, generateRefreshJWT } = require("../../auth/generateJWT");
 
 const signInUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -13,7 +13,7 @@ const signInUser = asyncHandler(async (req, res) => {
 
     // Select user from db
     const userInDatabase =
-      await sql`SELECT * FROM users WHERE email = ${email}`;
+      await sql`SELECT email, password FROM users WHERE email = ${email}`;
 
     if (userInDatabase.length < 1) {
       // Error if user does not exist
@@ -30,9 +30,15 @@ const signInUser = asyncHandler(async (req, res) => {
       throw new Error("Passwords do not match");
     }
 
-    // Generate JWT
+    // Generate JWT & Refresh
     const token = generateJWT(userInDatabase[0].user_id);
-    res.status(200).send({ message: "User authenticated", token: token });
+    const refreshToken = generateRefreshJWT(userInDatabase[0].user_id);
+
+    res.status(200).send({
+      message: "Authenticated",
+      token: token,
+      refresh_token: refreshToken,
+    });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }

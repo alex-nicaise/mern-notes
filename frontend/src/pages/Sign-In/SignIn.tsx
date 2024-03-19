@@ -5,22 +5,21 @@ import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
-import { signInState, signInSchema } from "./sign-in-schemas";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 import { setStorage } from "../../utils/localStorage";
+import { validateForms, zodErrorsType } from "../../utils/validateForms";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const [signInState, setsignInState] = useState<signInState>({
-    zodErrors: {},
-    serverMessage: "",
-  });
+  const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
+  const [serverMessage, setServerMessage] = useState<string>("");
   const { isLoading, setIsLoading } = useLoadingContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
     e.preventDefault();
-    setsignInState({ zodErrors: {}, serverMessage: "" });
+    setServerMessage("");
+    setZodErrors({});
     setIsLoading(true);
 
     const { email, password } = e.currentTarget;
@@ -30,17 +29,13 @@ const SignIn = () => {
       password: password.value,
     };
 
-    // Parse input data for validation
-    const validatedFields = signInSchema.safeParse(data);
+    // Validate input fields
+    const { errors } = validateForms("signIn", data);
 
-    if (!validatedFields.success) {
+    if (Object.keys(errors).length > 0) {
       setIsLoading(false);
-      return setsignInState((prev) => {
-        return {
-          ...prev,
-          zodErrors: validatedFields.error.flatten().fieldErrors,
-        };
-      });
+      setZodErrors(errors);
+      return;
     }
 
     // Send to api action
@@ -59,8 +54,8 @@ const SignIn = () => {
 
       const response = await request.json();
 
-      if (response.status === 400 || response.status === 500) {
-        throw new Error(response.message);
+      if (request.status !== 200) {
+        throw new Error(response.error);
       }
 
       // Set Loading to false
@@ -75,16 +70,10 @@ const SignIn = () => {
       // Set server message to Error
       if (error instanceof Error) {
         setIsLoading(false);
-        return setsignInState((prev) => {
-          return {
-            ...prev,
-            serverMessage: error.message,
-          };
-        });
-      } else {
-        setIsLoading(false);
-        return;
+        setServerMessage(error.message);
       }
+      setIsLoading(false);
+      return;
     }
   };
 
@@ -106,9 +95,7 @@ const SignIn = () => {
             placeholder="joe@example.com"
             disabled={isLoading}
           />
-          {signInState.zodErrors && (
-            <FormError>{signInState.zodErrors.email}</FormError>
-          )}
+          {zodErrors && <FormError>{zodErrors.email}</FormError>}
 
           <LabelInput
             name="password"
@@ -117,17 +104,12 @@ const SignIn = () => {
             placeholder="Your password..."
             disabled={isLoading}
           />
-          {signInState.zodErrors && (
-            <FormError>{signInState.zodErrors.password}</FormError>
-          )}
+          {zodErrors && <FormError>{zodErrors.password}</FormError>}
 
-          {signInState.serverMessage === "Success!" ? (
-            <ServerFeedbackDiv
-              alt="success"
-              message={signInState.serverMessage}
-            />
-          ) : signInState.serverMessage === "" ? null : (
-            <ServerFeedbackDiv message={signInState.serverMessage} />
+          {serverMessage === "Authenticated" ? (
+            <ServerFeedbackDiv alt="success" message={serverMessage} />
+          ) : serverMessage === "" ? null : (
+            <ServerFeedbackDiv message={serverMessage} />
           )}
 
           <Button
