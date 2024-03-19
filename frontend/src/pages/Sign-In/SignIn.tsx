@@ -62,7 +62,12 @@ const SignIn = () => {
       setIsLoading(false);
 
       // Set local storage for auth
-      setStorage(JSON.stringify(response));
+      const { token, refresh_token } = response;
+      setStorage({
+        auth: "Authenticated",
+        token: token,
+        refreshToken: refresh_token,
+      });
 
       // Navigate to dashboard
       navigate("/dashboard");

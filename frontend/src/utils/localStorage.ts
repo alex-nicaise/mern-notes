@@ -1,23 +1,38 @@
 // Utility classes for setting and removing token from local storage
 
-export const setStorage = (token: string) => {
-  if (!localStorage.getItem("user")) {
-    localStorage.setItem("user", token);
+// type for setting tokens
+type setItemsType = {
+  token: string;
+  refreshToken: string;
+  [key: string]: string;
+};
+
+export const setStorage = (items: setItemsType) => {
+  for (const item in items) {
+    localStorage.setItem(item, items[item]);
   }
 };
 
 export const getStorage = () => {
-  if (localStorage.getItem("user")) {
-    const user = localStorage.getItem("user");
-    if (user) {
-      return JSON.parse(user);
-    }
+  // Check for token
+  if (localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+    return { token };
   }
-  return null;
+
+  // TODO: IMPLEMENT BACKEND API VALIDATION CHECKING
+
+  return { token: null };
 };
 
 export const removeStorage = () => {
-  if (localStorage.getItem("user")) {
-    localStorage.removeItem("user");
+  if (localStorage.getItem("auth")) {
+    localStorage.removeItem("auth");
+  }
+  if (localStorage.getItem("token")) {
+    localStorage.removeItem("token");
+  }
+  if (localStorage.getItem("refreshToken")) {
+    localStorage.removeItem("refreshToken");
   }
 };

@@ -4,9 +4,9 @@ import { Navigate, Outlet } from "react-router-dom";
 const LoggedIn = () => {
   let isAuthenticated = false;
 
-  const user = getStorage();
+  const { token } = getStorage();
 
-  if (user !== null) {
+  if (token !== null) {
     isAuthenticated = true;
   } else {
     isAuthenticated = false;

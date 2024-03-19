@@ -13,7 +13,7 @@ const signInUser = asyncHandler(async (req, res) => {
 
     // Select user from db
     const userInDatabase =
-      await sql`SELECT email, password FROM users WHERE email = ${email}`;
+      await sql`SELECT user_id, email, password FROM users WHERE email = ${email}`;
 
     if (userInDatabase.length < 1) {
       // Error if user does not exist
