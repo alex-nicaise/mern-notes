@@ -1,27 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import FormError from "../../ui/FormError";
 import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
-import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 import { setStorage } from "../../utils/localStorage";
 import { validateForms, zodErrorsType } from "../../utils/validateForms";
-import useAuthContext from "../../context/AuthContext/useAuthContext";
+import useGlobalContext from "../../context/useGlobalContext";
+import authenticateUser from "../../utils/auth";
 
 const SignIn = () => {
-  const navigate = useNavigate();
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
   const [serverMessage, setServerMessage] = useState<string>("");
-  const { isLoading, setIsLoading } = useLoadingContext();
-  const { isAuthenticated, setIsAuthenticated } = useAuthContext();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated, setIsAuthenticated } = useGlobalContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
@@ -78,6 +71,7 @@ const SignIn = () => {
       });
 
       // Set authentication in context
+      await authenticateUser();
       setIsAuthenticated(true);
     } catch (error) {
       // Set server message to Error
@@ -92,7 +86,9 @@ const SignIn = () => {
     }
   };
 
-  return (
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" />
+  ) : (
     <section
       id="sign-in-section"
       className="w-full h-full flex justify-center items-center"

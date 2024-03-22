@@ -2,7 +2,7 @@ import React from "react";
 import Button from "./Button";
 import { removeStorage } from "../utils/localStorage";
 import { useNavigate } from "react-router-dom";
-import useAuthContext from "../context/AuthContext/useAuthContext";
+import useAuthContext from "../context/useGlobalContext";
 
 const LogOut = () => {
   const navigate = useNavigate();

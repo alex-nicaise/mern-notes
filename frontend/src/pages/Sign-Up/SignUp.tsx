@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import FormError from "../../ui/FormError";
 import Card from "../../ui/Card";
 import Button from "../../ui/Button";
 import ServerFeedbackDiv from "../../ui/ServerFeedbackDiv";
 import LabelInput from "../../ui/LabelInput";
 import { zodErrorsType } from "../../utils/validateForms";
-import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 import { validateForms } from "../../utils/validateForms";
+import useGlobalContext from "../../context/useGlobalContext";
 
 const SignUp = () => {
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
   const [serverMessage, setServerMessage] = useState<string>("");
-  const { isLoading, setIsLoading } = useLoadingContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated } = useGlobalContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
@@ -72,7 +73,9 @@ const SignUp = () => {
     }
   };
 
-  return (
+  return isAuthenticated ? (
+    <Navigate to="/dashboard" />
+  ) : (
     <section
       id="sign-in-section"
       className="w-full h-full flex justify-center items-center"
