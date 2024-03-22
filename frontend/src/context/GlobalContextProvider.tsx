@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import authenticateUser from "../utils/auth";
-import { PulseLoader } from "react-spinners";
 
 type GlobalContextType = {
   isAuthenticated: boolean;
