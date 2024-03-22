@@ -23,14 +23,14 @@ const SignUp = () => {
 
     const { email, password, confirmPassword } = e.currentTarget;
 
-    const data = {
+    const formData = {
       email: email.value,
       password: password.value,
       confirmPassword: confirmPassword.value,
     };
 
     // Validate input fields
-    const { errors } = validateForms("signUp", data);
+    const { errors } = validateForms("signUp", formData);
 
     if (Object.keys(errors).length > 0) {
       setIsLoading(false);
@@ -42,25 +42,25 @@ const SignUp = () => {
     try {
       // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
       const url = "http://localhost:4000/api/users/create";
-      const request = await fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
       });
 
-      const response = await request.json();
+      const data = await response.json();
 
-      if (request.status !== 200) {
-        throw new Error(response.error);
+      if (response.status !== 200) {
+        throw new Error(data.error);
       }
 
       // Set Loading to false
       setIsLoading(false);
       // Set server message to success if no status code issues
-      setServerMessage(response.message);
+      setServerMessage(data.message);
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
@@ -114,7 +114,7 @@ const SignUp = () => {
             })}
 
           {serverMessage === "User created" ? (
-            <ServerFeedbackDiv alt="success" message={serverMessage} />
+            <ServerFeedbackDiv alt="success" message={`${serverMessage}!`} />
           ) : serverMessage === "" ? (
             ""
           ) : (

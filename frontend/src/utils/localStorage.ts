@@ -2,8 +2,6 @@
 
 // type for setting tokens
 type setItemsType = {
-  token: string;
-  refreshToken: string;
   [key: string]: string;
 };
 
@@ -13,16 +11,14 @@ export const setStorage = (items: setItemsType) => {
   }
 };
 
-export const getStorage = () => {
+export const getStorage = (key: string) => {
   // Check for token
-  if (localStorage.getItem("token")) {
-    const token = localStorage.getItem("token");
-    return { token };
+  if (localStorage.getItem(key)) {
+    const item = localStorage.getItem(key);
+    return { item };
   }
 
-  // TODO: IMPLEMENT BACKEND API VALIDATION CHECKING
-
-  return { token: null };
+  return { item: null };
 };
 
 export const removeStorage = () => {
@@ -34,5 +30,8 @@ export const removeStorage = () => {
   }
   if (localStorage.getItem("refreshToken")) {
     localStorage.removeItem("refreshToken");
+  }
+  if (localStorage.getItem("userId")) {
+    localStorage.removeItem("userId");
   }
 };

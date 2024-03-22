@@ -1,4 +1,5 @@
 import { LuAlertOctagon, LuCheckCircle } from "react-icons/lu";
+import { Link } from "react-router-dom";
 
 const ServerFeedbackDiv = ({
   alt,
@@ -11,6 +12,10 @@ const ServerFeedbackDiv = ({
     return (
       <div className="flex bg-blue-500 text-blue-900 py-1 px-4 mt-3 rounded-lg justify-center items-center">
         <LuCheckCircle className="text-xl mr-1" /> {message}
+        &nbsp;
+        <Link to="/" className="underline">
+          Sign in here.
+        </Link>
       </div>
     );
   } else {

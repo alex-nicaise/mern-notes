@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FormError from "../../ui/FormError";
 import Card from "../../ui/Card";
@@ -8,12 +8,20 @@ import LabelInput from "../../ui/LabelInput";
 import { useLoadingContext } from "../../context/LoadingContext/useLoadingContext";
 import { setStorage } from "../../utils/localStorage";
 import { validateForms, zodErrorsType } from "../../utils/validateForms";
+import useAuthContext from "../../context/AuthContext/useAuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
   const [serverMessage, setServerMessage] = useState<string>("");
   const { isLoading, setIsLoading } = useLoadingContext();
+  const { isAuthenticated, setIsAuthenticated } = useAuthContext();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
@@ -24,13 +32,13 @@ const SignIn = () => {
 
     const { email, password } = e.currentTarget;
 
-    const data = {
+    const formData = {
       email: email.value,
       password: password.value,
     };
 
     // Validate input fields
-    const { errors } = validateForms("signIn", data);
+    const { errors } = validateForms("signIn", formData);
 
     if (Object.keys(errors).length > 0) {
       setIsLoading(false);
@@ -43,40 +51,42 @@ const SignIn = () => {
       // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
       const url = "http://localhost:4000/api/users/login";
 
-      const request = await fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formData),
       });
 
-      const response = await request.json();
+      const data = await response.json();
 
-      if (request.status !== 200) {
-        throw new Error(response.error);
+      if (response.status !== 200) {
+        throw new Error(data.error);
       }
 
       // Set Loading to false
       setIsLoading(false);
 
       // Set local storage for auth
-      const { token, refresh_token } = response;
+      const { token, refresh_token } = data;
       setStorage({
         auth: "Authenticated",
         token: token,
         refreshToken: refresh_token,
       });
 
-      // Navigate to dashboard
-      navigate("/dashboard");
+      // Set authentication in context
+      setIsAuthenticated(true);
     } catch (error) {
       // Set server message to Error
       if (error instanceof Error) {
         setIsLoading(false);
+        setIsAuthenticated(false);
         setServerMessage(error.message);
       }
+      setIsAuthenticated(false);
       setIsLoading(false);
       return;
     }

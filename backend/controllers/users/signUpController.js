@@ -32,9 +32,9 @@ const signUpUser = asyncHandler(async (req, res) => {
       throw new Error("User not created");
     }
 
-    res.status(200).send({ message: "User created" });
+    res.status(200).json({ message: "User created" });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

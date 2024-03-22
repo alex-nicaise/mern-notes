@@ -34,13 +34,13 @@ const signInUser = asyncHandler(async (req, res) => {
     const token = generateJWT(userInDatabase[0].user_id);
     const refreshToken = generateRefreshJWT(userInDatabase[0].user_id);
 
-    res.status(200).send({
+    res.status(200).json({
       message: "Authenticated",
       token: token,
       refresh_token: refreshToken,
     });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
