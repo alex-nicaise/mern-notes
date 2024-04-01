@@ -14,6 +14,7 @@ const SignIn = () => {
   const [serverMessage, setServerMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useGlobalContext();
+  const { setSessionUser } = useGlobalContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default behavior and reset errors
@@ -65,10 +66,17 @@ const SignIn = () => {
       const { token, refresh_token, user } = data;
       setStorage({
         auth: "Authenticated",
-        token: JSON.stringify(token),
-        refreshToken: JSON.stringify(refresh_token),
+        token: token,
+        refreshToken: refresh_token,
         user: JSON.stringify(user),
       });
+
+      // Set context so user can see name on login
+      setSessionUser((prev) => ({
+        ...prev,
+        email: user.email,
+        name: user.name,
+      }));
 
       setIsAuthenticated(true);
     } catch (error) {

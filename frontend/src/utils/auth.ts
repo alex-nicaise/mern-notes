@@ -17,6 +17,7 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
 
   const authResponse = await fetch(url, {
     method: "POST",
+    mode: "cors",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

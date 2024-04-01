@@ -11,9 +11,9 @@ const authenticateUser = asyncHandler(async (req, res) => {
   const userId = verifyJWT(token);
 
   if (userId === false) {
-    res.status(401).send("Not authorized");
+    res.status(401).json({ error: "Not authorized" });
   } else {
-    res.status(200).send("User authenticated");
+    res.status(200).json({ message: "User authenticated" });
   }
 });
 
