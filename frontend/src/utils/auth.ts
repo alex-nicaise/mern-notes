@@ -13,7 +13,9 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
     throw new Error("Authorization token not found");
   }
 
-  const authResponse = await fetch("http://localhost:4000/api/users/validate", {
+  const url = "http://localhost:4000/api/users/authenticate";
+
+  const authResponse = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

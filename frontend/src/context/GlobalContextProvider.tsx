@@ -1,10 +1,19 @@
 import { createContext, useEffect, useState } from "react";
 import authenticateUser from "../utils/auth";
 
-type sessionUser = {
+type userNotes = {
   id: string;
-  email: string;
-  notes: string[];
+  title: string;
+  body: string;
+  created_at: string;
+  user_id: string;
+  updated_at: string;
+};
+
+type sessionUser = {
+  id?: string;
+  email?: string;
+  notes?: userNotes[];
 };
 
 type GlobalContextType = {
@@ -13,7 +22,7 @@ type GlobalContextType = {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   sessionUser?: sessionUser;
-  setSessionUser: React.Dispatch<React.SetStateAction<sessionUser>>;
+  setSessionUser: React.Dispatch<React.SetStateAction<sessionUser | undefined>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -25,17 +34,13 @@ export const GlobalContextProvider = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionUser, setSessionUser] = useState({
-    id: "",
-    email: "",
-    notes: [""],
-  });
+  const [sessionUser, setSessionUser] = useState<sessionUser | undefined>();
 
   useEffect(() => {
-    validateUser();
+    validateUserforContext();
   }, []);
 
-  const validateUser = async () => {
+  const validateUserforContext = async () => {
     setIsLoading(true);
     try {
       const { message } = await authenticateUser();
