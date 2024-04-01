@@ -13,7 +13,7 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
     throw new Error("Authorization token not found");
   }
 
-  const response = await fetch("http://localhost:4000/api/users/validate", {
+  const authResponse = await fetch("http://localhost:4000/api/users/validate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,11 +21,11 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
     },
   });
 
-  if (response.status !== 200) {
+  if (authResponse.status !== 200) {
     throw new Error("Failed to authenticate user");
   }
 
-  const { id } = await response.json();
+  const { id } = await authResponse.json();
 
   setStorage({ userId: id });
   return { message: "User authenticated" };
