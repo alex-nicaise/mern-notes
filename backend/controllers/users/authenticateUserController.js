@@ -1,17 +1,20 @@
 const jwt = require("jsonwebtoken");
+const { verifyJWT } = require("../../auth/verifyJWT");
+const { sql } = require("../../database/db");
+const asyncHandler = require("express-async-handler");
 
 // Authenticates based on JWT verification
-const authenticateUser = (req, res) => {
+const authenticateUser = asyncHandler(async (req, res) => {
   const bearer = req.headers.authorization;
   const token = bearer.split(" ")[1];
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      res.status(401).json({ error: "Unauthorized" });
-    } else {
-      res.status(200).json({ message: "User authenticated", id: decoded.id });
-    }
-  });
-};
+  const userId = verifyJWT(token);
+
+  if (userId === false) {
+    res.status(401).send("Not authorized");
+  } else {
+    res.status(200).send("User authenticated");
+  }
+});
 
 module.exports = { authenticateUser };

@@ -1,11 +1,17 @@
 import React from "react";
 import LogOut from "../../ui/LogOut";
+import useGlobalContext from "../../context/useGlobalContext";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const { sessionUser } = useGlobalContext();
+
   return (
     <>
       <div>
-        <h1>This is a header</h1>
+        <h1>
+          Hello,{" "}
+          {sessionUser?.name !== null ? sessionUser?.name : sessionUser?.email}
+        </h1>
         <LogOut />
       </div>
       {children}

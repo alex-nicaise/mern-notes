@@ -15,23 +15,12 @@ export const getStorage = (key: string) => {
   // Check for token
   if (localStorage.getItem(key)) {
     const item = localStorage.getItem(key);
-    return { item };
+    return item;
   }
 
-  return { item: null };
+  return null;
 };
 
 export const removeStorage = () => {
-  if (localStorage.getItem("auth")) {
-    localStorage.removeItem("auth");
-  }
-  if (localStorage.getItem("token")) {
-    localStorage.removeItem("token");
-  }
-  if (localStorage.getItem("refreshToken")) {
-    localStorage.removeItem("refreshToken");
-  }
-  if (localStorage.getItem("userId")) {
-    localStorage.removeItem("userId");
-  }
+  localStorage.clear();
 };

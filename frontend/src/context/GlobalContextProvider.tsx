@@ -1,20 +1,7 @@
 import { createContext, useEffect, useState } from "react";
+import { sessionUser } from "./globalUserTypes";
 import authenticateUser from "../utils/auth";
-
-type userNotes = {
-  id: string;
-  title: string;
-  body: string;
-  created_at: string;
-  user_id: string;
-  updated_at: string;
-};
-
-type sessionUser = {
-  id?: string;
-  email?: string;
-  notes?: userNotes[];
-};
+import { getStorage } from "../utils/localStorage";
 
 type GlobalContextType = {
   isAuthenticated: boolean;
@@ -42,17 +29,33 @@ export const GlobalContextProvider = ({
 
   const validateUserforContext = async () => {
     setIsLoading(true);
+
     try {
       const { message } = await authenticateUser();
 
-      if (message) {
-        setIsLoading(false);
-        return setIsAuthenticated(true);
+      if (message !== "User authenticated") {
+        throw new Error("User not authenticated");
       }
 
+      if (getStorage("user") === null) {
+        throw new Error("No user found in local storage");
+      }
+
+      const user = getStorage("user");
+
+      if (user !== null) {
+        setSessionUser((prev) => ({
+          ...prev,
+          email: JSON.parse(user).email,
+          name: JSON.parse(user).name,
+        }));
+      }
+
+      setIsAuthenticated(true);
       setIsLoading(false);
     } catch (error) {
       console.error(error);
+      setIsAuthenticated(false);
       setIsLoading(false);
     }
   };

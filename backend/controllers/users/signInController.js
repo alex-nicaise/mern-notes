@@ -13,7 +13,7 @@ const signInUser = asyncHandler(async (req, res) => {
 
     // Select user from db
     const userInDatabase =
-      await sql`SELECT user_id, email, password FROM users WHERE email = ${email}`;
+      await sql`SELECT name, email, password FROM users WHERE email = ${email}`;
 
     if (userInDatabase.length < 1) {
       // Error if user does not exist
@@ -38,6 +38,10 @@ const signInUser = asyncHandler(async (req, res) => {
       message: "Authenticated",
       token: token,
       refresh_token: refreshToken,
+      user: {
+        name: userInDatabase[0].name,
+        email: userInDatabase[0].email,
+      },
     });
   } catch (error) {
     res.status(400).json({ error: error.message });

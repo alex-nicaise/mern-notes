@@ -8,7 +8,6 @@ import LabelInput from "../../ui/LabelInput";
 import { setStorage } from "../../utils/localStorage";
 import { validateForms, zodErrorsType } from "../../utils/validateForms";
 import useGlobalContext from "../../context/useGlobalContext";
-import authenticateUser from "../../utils/auth";
 
 const SignIn = () => {
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
@@ -63,15 +62,14 @@ const SignIn = () => {
       setIsLoading(false);
 
       // Set local storage for auth
-      const { token, refresh_token } = data;
+      const { token, refresh_token, user } = data;
       setStorage({
         auth: "Authenticated",
-        token: token,
-        refreshToken: refresh_token,
+        token: JSON.stringify(token),
+        refreshToken: JSON.stringify(refresh_token),
+        user: JSON.stringify(user),
       });
 
-      // Set authentication in context
-      await authenticateUser();
       setIsAuthenticated(true);
     } catch (error) {
       // Set server message to Error
@@ -80,9 +78,6 @@ const SignIn = () => {
         setIsAuthenticated(false);
         setServerMessage(error.message);
       }
-      setIsAuthenticated(false);
-      setIsLoading(false);
-      return;
     }
   };
 

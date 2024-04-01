@@ -1,15 +1,19 @@
 const { sql } = require("../../database/db");
 const asyncHandler = require("express-async-handler");
+const { verifyJWT } = require("../../auth/verifyJWT");
 
 const getCurrentNotes = asyncHandler(async (req, res) => {
-  const { id } = req.body;
+  const bearer = req.headers.authorization;
+  const token = bearer.split(" ")[1];
 
   try {
-    const notes = await sql`SELECT * FROM notes WHERE user_id = ${id}`;
+    const userId = verifyJWT(token);
 
-    if (notes.length < 1) {
-      throw new Error("No notes found");
+    if (userId === false) {
+      throw new Error("Not authorized");
     }
+
+    const notes = await sql`SELECT * FROM notes WHERE user_id = ${userId}`;
 
     return res.status(200).json({ notes });
   } catch (error) {

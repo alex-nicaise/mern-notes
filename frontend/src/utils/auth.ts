@@ -1,4 +1,4 @@
-import { getStorage, setStorage } from "./localStorage";
+import { getStorage } from "./localStorage";
 
 type authenticateResponseType = {
   message: string;
@@ -7,9 +7,9 @@ type authenticateResponseType = {
 
 // Sends token to backend to confirm it's valid
 const authenticateUser = async (): Promise<authenticateResponseType> => {
-  const { item } = getStorage("token");
+  const token = getStorage("token");
 
-  if (item === null) {
+  if (token === null) {
     throw new Error("Authorization token not found");
   }
 
@@ -19,7 +19,7 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${item}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -27,9 +27,6 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
     throw new Error("Failed to authenticate user");
   }
 
-  const { id } = await authResponse.json();
-
-  setStorage({ userId: id });
   return { message: "User authenticated" };
 };
 
