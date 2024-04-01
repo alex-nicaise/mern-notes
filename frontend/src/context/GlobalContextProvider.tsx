@@ -47,17 +47,3 @@ export const GlobalContextProvider = ({
     </GlobalContext.Provider>
   );
 };
-
-/*
-
-// Login
-  ^^^^^// Sets the token in local storage
-  ^^^^^// isAuthenticated === true in context
-
-// Context
-  ^^^^^// on "/" route, if isAuthenticated === true > push to dashboard
-  ^^^^^// on App load > useEffect > authenticateUser
-
-// Dashboard
-  ^^^^^// isAuthenticated ? render : navigate
-*/

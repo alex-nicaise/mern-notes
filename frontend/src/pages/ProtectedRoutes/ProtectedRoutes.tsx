@@ -1,8 +1,8 @@
-import useAuthContext from "../../context/useGlobalContext";
+import useGlobalContext from "../../context/useGlobalContext";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoutes = () => {
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useGlobalContext();
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };

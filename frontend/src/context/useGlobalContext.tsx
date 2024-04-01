@@ -5,7 +5,9 @@ const useGlobalContext = () => {
   const context = useContext(GlobalContext);
 
   if (!context) {
-    throw new Error("useAuthContext must be used within a AuthContextProvider");
+    throw new Error(
+      "useGlobalContext must be used within a GlobalContextProvider"
+    );
   }
 
   return context;

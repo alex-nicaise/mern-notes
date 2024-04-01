@@ -31,8 +31,8 @@ const signInUser = asyncHandler(async (req, res) => {
     }
 
     // Generate JWT & Refresh
-    const token = generateJWT(userInDatabase[0].user_id);
-    const refreshToken = generateRefreshJWT(userInDatabase[0].user_id);
+    const token = generateJWT(userInDatabase[0].user_id, "5d");
+    const refreshToken = generateJWT(userInDatabase[0].user_id, "30d");
 
     res.status(200).json({
       message: "Authenticated",
