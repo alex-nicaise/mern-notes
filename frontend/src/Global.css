@@ -23,7 +23,11 @@ body,
   height: 100dvh;
 }
 
-@media (prefers-color-scheme: dark) {
+.width-container {
+  max-width: 900px;
+}
+
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
@@ -43,9 +47,9 @@ body,
     --bg-color: #cfcfcf;
     --text-color: #111;
   }
-}
+} */
 
-body {
+/* body {
   background: var(--bg-color);
   color: var(--text-color);
-}
+} */

@@ -1,20 +1,18 @@
 import React from "react";
-import LogOut from "../../ui/LogOut";
 import useGlobalContext from "../../context/useGlobalContext";
+import Header from "../../ui/Header";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { sessionUser } = useGlobalContext();
 
   return (
     <>
-      <div>
-        <h1>
-          Hello,{" "}
-          {sessionUser?.name !== null ? sessionUser?.name : sessionUser?.email}
-        </h1>
-        <LogOut />
-      </div>
-      {children}
+      <Header sessionUser={sessionUser} />
+
+      <main className="flex flex-col w-full h-full bg-gray-200 dark:bg-gray-900">
+        {children}
+      </main>
+
       <aside>
         <h2>this is a sidebar</h2>
       </aside>

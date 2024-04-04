@@ -59,9 +59,6 @@ const SignIn = () => {
         throw new Error(data.error);
       }
 
-      // Set Loading to false
-      setIsLoading(false);
-
       // Set local storage for auth
       const { token, refresh_token, user } = data;
       setStorage({
@@ -89,14 +86,12 @@ const SignIn = () => {
     }
   };
 
-  return isAuthenticated ? (
-    <Navigate to="/dashboard" />
-  ) : (
-    <section
+  return !isAuthenticated || isAuthenticated === null ? (
+    <main
       id="sign-in-section"
-      className="w-full h-full flex justify-center items-center"
+      className="w-full h-full flex justify-center items-center bg-gray-200 dark:bg-gray-950"
     >
-      <Card extraClasses="py-16 px-8 max-w-md">
+      <Card extraClasses="py-16 px-8 max-w-md bg-white dark:bg-gray-950">
         <h1 className="font-bold text-lg">Log In To Your Account</h1>
         <form
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}
@@ -142,7 +137,9 @@ const SignIn = () => {
           </Link>
         </p>
       </Card>
-    </section>
+    </main>
+  ) : (
+    <Navigate to="/dashboard" />
   );
 };
 

@@ -6,12 +6,14 @@ const Button = ({
   alt,
   extraClasses,
   disabled,
+  onClick,
 }: {
   children: React.ReactNode;
   type?: "submit" | "reset" | "button" | undefined;
   alt: string;
   extraClasses?: string;
   disabled?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   if (alt === "primary") {
     return (
@@ -19,6 +21,7 @@ const Button = ({
         type={type}
         disabled={disabled}
         className={`bg-emerald-500 hover:bg-emerald-400 py-2 px-4 text-white text-center rounded-full disabled:opacity-75 ${extraClasses}`}
+        onClick={onClick}
       >
         {disabled ? "Submitting..." : children}
       </button>

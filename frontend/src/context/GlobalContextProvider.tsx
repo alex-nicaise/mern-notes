@@ -4,8 +4,8 @@ import authenticateUser from "../utils/auth";
 import { getStorage } from "../utils/localStorage";
 
 type GlobalContextType = {
-  isAuthenticated: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  isAuthenticated: boolean | null;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   sessionUser?: sessionUser;
@@ -19,8 +19,8 @@ export const GlobalContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [sessionUser, setSessionUser] = useState<sessionUser | undefined>();
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export const GlobalContextProvider = ({
 
   const validateUserforContext = async () => {
     setIsLoading(true);
-
     try {
       const { message } = await authenticateUser();
 
@@ -52,11 +51,9 @@ export const GlobalContextProvider = ({
       }
 
       setIsAuthenticated(true);
-      setIsLoading(false);
     } catch (error) {
       console.error(error);
       setIsAuthenticated(false);
-      setIsLoading(false);
     }
   };
 
@@ -71,7 +68,7 @@ export const GlobalContextProvider = ({
         setSessionUser,
       }}
     >
-      {isLoading ? "" : children}
+      {children}
     </GlobalContext.Provider>
   );
 };

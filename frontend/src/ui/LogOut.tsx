@@ -6,15 +6,15 @@ import useAuthContext from "../context/useGlobalContext";
 
 const LogOut = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useAuthContext();
+  const { setIsAuthenticated, setSessionUser } = useAuthContext();
   const handleLogOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    // Prevent default behavior
     e.preventDefault();
 
     // Remove user from local storage
     removeStorage();
 
-    // Set authentication in context
+    setSessionUser(undefined);
+
     setIsAuthenticated(false);
 
     // Redirect to sign in
