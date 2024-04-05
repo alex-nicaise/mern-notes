@@ -47,6 +47,7 @@ const SignIn = () => {
       const response = await fetch(url, {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,11 +61,10 @@ const SignIn = () => {
       }
 
       // Set local storage for auth
-      const { token, refresh_token, user } = data;
+      const { token, user } = data;
       setStorage({
         auth: "Authenticated",
         token: token,
-        refreshToken: refresh_token,
         user: JSON.stringify(user),
       });
 

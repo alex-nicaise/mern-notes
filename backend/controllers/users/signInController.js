@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { validateFields } = require("./validateUser");
 const { sql } = require("../../database/db");
 const bcrypt = require("bcrypt");
-const { generateJWT, generateRefreshJWT } = require("../../auth/generateJWT");
+const { generateJWT } = require("../../auth/generateJWT");
 
 const signInUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -13,7 +13,7 @@ const signInUser = asyncHandler(async (req, res) => {
 
     // Select user from db
     const userInDatabase =
-      await sql`SELECT name, email, password FROM users WHERE email = ${email}`;
+      await sql`SELECT user_id, name, email, password FROM users WHERE email = ${email}`;
 
     if (userInDatabase.length < 1) {
       // Error if user does not exist
@@ -31,13 +31,19 @@ const signInUser = asyncHandler(async (req, res) => {
     }
 
     // Generate JWT & Refresh
-    const token = generateJWT(userInDatabase[0].user_id, "5d");
-    const refreshToken = generateJWT(userInDatabase[0].user_id, "30d");
+    const token = generateJWT(
+      userInDatabase[0].user_id,
+      `${60_000 * 15}` /* 15 minutes */
+    );
+    const refreshToken = generateJWT(userInDatabase[0].user_id, "10d");
 
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
     res.status(200).json({
       message: "Authenticated",
       token: token,
-      refresh_token: refreshToken,
       user: {
         name: userInDatabase[0].name,
         email: userInDatabase[0].email,
