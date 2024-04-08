@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import useGlobalContext from "../../context/useGlobalContext";
 import DashboardLayout from "./DashboardLayout";
 import LostPage from "../../ui/LostPage";
+import LoadingSplash from "../../ui/LoadingSplash";
 
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
@@ -11,7 +12,7 @@ const Dashboard = () => {
   });
 
   return isLoading ? (
-    "Loading..."
+    <LoadingSplash />
   ) : isAuthenticated === null || !isAuthenticated ? (
     <LostPage />
   ) : (
