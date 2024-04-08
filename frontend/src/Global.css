@@ -10,10 +10,13 @@
 
 html {
   color-scheme: dark light;
+  background-color: rgb(17 24 39 / 1);
 }
 
 #root {
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 html,
@@ -24,5 +27,17 @@ body,
 }
 
 .width-container {
-  max-width: 900px;
+  max-width: 1920px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: rgb(17 24 39 / 1);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    background-color: white;
+  }
 }

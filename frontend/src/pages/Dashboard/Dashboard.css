@@ -1,0 +1,20 @@
+#notes-list-sidebar {
+  position: relative;
+  width: 500px;
+}
+
+@media (max-width: 767px) {
+  #notes-list-sidebar {
+    position: absolute;
+    width: 100dvw;
+    transition: transform 0.25s ease-in-out;
+  }
+
+  #notes-list-sidebar.sidebar-open {
+    transform: translateX(0%);
+  }
+
+  #notes-list-sidebar.sidebar-close {
+    transform: translateX(-100%);
+  }
+}
