@@ -15,24 +15,24 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Header sessionUser={sessionUser} onSideBarToggle={onSideBarToggle} />
 
-      <section className="flex h-full" id="notes-main-sidebar-wrapper">
+      <main className="flex h-full" id="notes-main-sidebar-wrapper">
         <aside
           id="notes-list-sidebar"
           className={
             sidebarOpen
-              ? "sidebar-open flex flex-col h-full bg-gray-300 text-black"
-              : "sidebar-close flex flex-col h-full bg-gray-300 text-black"
+              ? "sidebar-open flex flex-col h-full bg-gray-300 text-black p-10 lg:p-10 md:py-10 md:px-5"
+              : "sidebar-close flex flex-col h-full bg-gray-300 text-black p-10 lg:p-10 md:py-10 md:px-5"
           }
         >
-          <h2 className="text-xl font-bold mt-10 ml-10 mb-6">Notes</h2>
+          <h2 className="text-xl font-bold mb-8">Notes</h2>
           <ul>
-            <li className="mb-3 hover:bg-gray-400 py-3 px-10">
+            <li className="hover:bg-gray-400 py-4 border-t border-b border-gray-400">
               <h4 className="font-bold">Note One</h4>
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
             </li>
           </ul>
         </aside>
-        <main
+        <section
           id="main-notes-view"
           className={
             sidebarOpen
@@ -43,8 +43,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex flex-col w-full justify-center width-container p-10">
             {children}
           </div>
-        </main>
-      </section>
+        </section>
+      </main>
     </>
   );
 };

@@ -3,11 +3,15 @@
   width: 500px;
 }
 
+#notes-list-sidebar li {
+  transition: background-color 0.12s ease-in-out;
+}
+
 @media (max-width: 767px) {
   #notes-list-sidebar {
     position: absolute;
     width: 100dvw;
-    transition: transform 0.25s ease-in-out;
+    transition: transform 0.24s ease-in-out;
   }
 
   #notes-list-sidebar.sidebar-open {
