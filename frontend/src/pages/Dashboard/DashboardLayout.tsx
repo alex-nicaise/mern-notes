@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import useGlobalContext from "../../context/useGlobalContext";
 import Header from "../../ui/Header";
-import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
-import Button from "../../ui/Button";
+import { FaRegEdit } from "react-icons/fa";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { sessionUser } = useGlobalContext();
