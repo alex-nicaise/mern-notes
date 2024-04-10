@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import useGlobalContext from "../../context/useGlobalContext";
 import Header from "../../ui/Header";
+import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
+import Button from "../../ui/Button";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { sessionUser } = useGlobalContext();
@@ -26,9 +28,23 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <h2 className="text-xl font-bold mb-8">Notes</h2>
           <ul>
-            <li className="hover:bg-gray-400 py-4 border-t border-b border-gray-400">
-              <h4 className="font-bold">Note One</h4>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+            <li>
+              <div className="flex border-t border-b border-gray-400 ">
+                <div className="py-4 pr-4 hover:bg-gray-400">
+                  <h4 className="font-bold" aria-describedby="note title">
+                    Note One
+                  </h4>
+                  <p aria-describedby="note body">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit...
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center"
+                >
+                  <FaRegEdit size={24} aria-describedby="edit button" />
+                </button>
+              </div>
             </li>
           </ul>
         </aside>
@@ -40,7 +56,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               : "sidebar-close flex flex-col h-full bg-white dark:bg-gray-900 items-center w-full"
           }
         >
-          <div className="flex flex-col w-full justify-center width-container p-10">
+          <div className="flex flex-col w-full h-full width-container py-10 px-8 sm:px-14">
             {children}
           </div>
         </section>

@@ -7,6 +7,10 @@
   transition: background-color 0.12s ease-in-out;
 }
 
+textarea[name="note-body"] {
+  resize: none;
+}
+
 @media (max-width: 767px) {
   #notes-list-sidebar {
     position: absolute;
