@@ -11,6 +11,10 @@ textarea[name="note-body"] {
   resize: none;
 }
 
+.note-list-item {
+  margin-top: -1px;
+}
+
 @media (max-width: 767px) {
   #notes-list-sidebar {
     position: absolute;

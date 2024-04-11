@@ -24,42 +24,42 @@ export const GlobalContextProvider = ({
   const [sessionUser, setSessionUser] = useState<sessionUser | undefined>();
 
   useEffect(() => {
+    const validateUserforContext = async () => {
+      setIsLoading(true);
+      try {
+        const { message, newToken } = await authenticateUser();
+
+        if (message !== "User authenticated") {
+          throw new Error("User not authenticated");
+        }
+
+        if (newToken) {
+          setStorage({ token: newToken });
+        }
+
+        if (getStorage("user") === null) {
+          throw new Error("No user found in local storage");
+        }
+
+        const user = getStorage("user");
+
+        if (user !== null) {
+          setSessionUser((prev) => ({
+            ...prev,
+            email: JSON.parse(user).email,
+            name: JSON.parse(user).name,
+          }));
+        }
+
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error(error);
+        setIsAuthenticated(false);
+      }
+    };
+
     validateUserforContext();
   }, []);
-
-  const validateUserforContext = async () => {
-    setIsLoading(true);
-    try {
-      const { message, newToken } = await authenticateUser();
-
-      if (message !== "User authenticated") {
-        throw new Error("User not authenticated");
-      }
-
-      if (newToken) {
-        setStorage({ token: newToken });
-      }
-
-      if (getStorage("user") === null) {
-        throw new Error("No user found in local storage");
-      }
-
-      const user = getStorage("user");
-
-      if (user !== null) {
-        setSessionUser((prev) => ({
-          ...prev,
-          email: JSON.parse(user).email,
-          name: JSON.parse(user).name,
-        }));
-      }
-
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error(error);
-      setIsAuthenticated(false);
-    }
-  };
 
   return (
     <GlobalContext.Provider

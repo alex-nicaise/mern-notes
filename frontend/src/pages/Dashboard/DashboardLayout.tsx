@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import useGlobalContext from "../../context/useGlobalContext";
 import Header from "../../ui/Header";
 import { FaRegEdit } from "react-icons/fa";
+import { userNotes } from "../../context/globalUserTypes";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = ({
+  children,
+  notes,
+}: {
+  children: React.ReactNode;
+  notes: userNotes[];
+}) => {
   const { sessionUser } = useGlobalContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -27,24 +34,26 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         >
           <h2 className="text-xl font-bold mb-8">Notes</h2>
           <ul>
-            <li>
-              <div className="flex border-t border-b border-gray-400 ">
-                <div className="py-4 pr-4 hover:bg-gray-400">
-                  <h4 className="font-bold" aria-describedby="note title">
-                    Note One
-                  </h4>
-                  <p aria-describedby="note body">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit...
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center"
-                >
-                  <FaRegEdit size={24} aria-describedby="edit button" />
-                </button>
-              </div>
-            </li>
+            {notes.map((note) => {
+              return (
+                <li className="note-list-item" key={note?.id}>
+                  <div className="flex border-t border-b border-gray-400 ">
+                    <div className="py-4 pr-4 hover:bg-gray-400">
+                      <h4 className="font-bold" aria-describedby="note title">
+                        {note?.title}
+                      </h4>
+                      <p aria-describedby="note body">{note?.body}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center"
+                    >
+                      <FaRegEdit size={24} aria-describedby="edit button" />
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </aside>
         <section
