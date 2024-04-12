@@ -7,6 +7,7 @@ import NoteEditForm from "../../ui/NoteEditForm";
 import { useNavigate } from "react-router-dom";
 import { getStorage } from "../../utils/localStorage";
 import { userNotes } from "../../context/globalUserTypes";
+import NotesSidebar from "../../ui/NotesSidebar";
 
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
@@ -17,6 +18,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getNotes = async () => {
+      let ignore = false;
       try {
         const url = "http://localhost:4000/api/notes/get-current/";
         const token = getStorage("token");
@@ -38,8 +40,11 @@ const Dashboard = () => {
           throw new Error("Connection to server failed");
         }
         const { notes } = await response.json();
-        setNotes(notes);
-        setIsLoading(false);
+
+        if (!ignore) {
+          setNotes(notes);
+          setIsLoading(false);
+        }
       } catch (error) {
         if (error instanceof Error) {
           if (error.message === "Authorization token not found") {
@@ -47,14 +52,20 @@ const Dashboard = () => {
             navigate("/");
             return;
           }
-          setError(error.message);
-          setIsLoading(false);
+          if (!ignore) {
+            setError(error.message);
+            setIsLoading(false);
+          }
         }
       }
+
+      return () => {
+        ignore = true;
+      };
     };
 
     getNotes();
-  });
+  }, [navigate, setIsLoading]);
 
   return isLoading ? (
     <LoadingSplash />
@@ -62,9 +73,16 @@ const Dashboard = () => {
     <LostPage />
   ) : (
     <>
-      <DashboardLayout notes={notes}>
-        {error}
-        <NoteEditForm />
+      <DashboardLayout>
+        <NotesSidebar notes={notes} error={error} />
+        <section
+          id="main-notes-view"
+          className="flex flex-col h-full bg-white dark:bg-gray-900 items-center w-full"
+        >
+          <div className="flex flex-col w-full h-full width-container py-16 md:py-10 px-8 sm:px-14">
+            <NoteEditForm />
+          </div>
+        </section>
       </DashboardLayout>
     </>
   );

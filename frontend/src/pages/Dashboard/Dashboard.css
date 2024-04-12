@@ -1,6 +1,7 @@
 #notes-list-sidebar {
   position: relative;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 }
 
 #notes-list-sidebar li {
@@ -15,10 +16,32 @@ textarea[name="note-body"] {
   margin-top: -1px;
 }
 
+p[aria-describedby="note body"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+#sidebar-button-container {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+button#sidebar-open {
+  position: absolute;
+  left: calc(100dvw - 40px);
+  bottom: 31px;
+}
+
 @media (max-width: 767px) {
   #notes-list-sidebar {
     position: absolute;
     width: 100dvw;
+    max-width: 100dvw;
     transition: transform 0.24s ease-in-out;
   }
 

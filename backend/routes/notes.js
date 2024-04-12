@@ -1,8 +1,8 @@
 const express = require("express");
-const router = express.Router();
 const {
   getCurrentNotes,
 } = require("../controllers/notes/getCurrentNotesController");
+const router = express.Router();
 
 router.route("/get-current").post(getCurrentNotes);
 

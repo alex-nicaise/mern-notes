@@ -11,13 +11,13 @@ const getCurrentNotes = asyncHandler(async (req, res) => {
 
     if (userId === false) {
       throw new Error("Not authorized");
+    } else {
+      const notes = await sql`SELECT * FROM notes WHERE user_id = ${userId}`;
+
+      res.status(200).json({ notes });
     }
-
-    const notes = await sql`SELECT * FROM notes WHERE user_id = ${userId}`;
-
-    return res.status(200).json({ notes });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 

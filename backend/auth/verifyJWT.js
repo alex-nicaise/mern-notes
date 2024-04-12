@@ -8,8 +8,9 @@ const verifyJWT = (token) => {
     (err, decoded) => {
       if (err) {
         return false;
+      } else {
+        return decoded.id;
       }
-      return decoded.id;
     }
   );
 
