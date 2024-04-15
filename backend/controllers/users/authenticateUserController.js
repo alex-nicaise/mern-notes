@@ -28,9 +28,9 @@ const authenticateUser = asyncHandler(async (req, res) => {
       res
         .status(200)
         .json({ message: "User authenticated", newToken: newToken });
+    } else {
+      res.status(200).json({ message: "User authenticated" });
     }
-
-    res.status(200).json({ message: "User authenticated" });
   } catch (error) {
     res.status(401).json({ error: error.message });
   }

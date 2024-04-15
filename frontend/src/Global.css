@@ -11,10 +11,10 @@
 html {
   color-scheme: dark light;
   background-color: rgb(17 24 39 / 1);
+  overflow-x: hidden;
 }
 
 #root {
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }

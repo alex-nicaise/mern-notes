@@ -4,6 +4,7 @@ const LabelInput = ({
   label,
   placeholder,
   disabled,
+  defaultValue,
 }: {
   name: string;
   type: string;
@@ -11,6 +12,7 @@ const LabelInput = ({
   placeholder: string;
   required?: boolean;
   disabled?: boolean;
+  defaultValue?: string;
 }) => {
   return (
     <>
@@ -23,6 +25,7 @@ const LabelInput = ({
         className="w-full mt-1 p-1 px-3 border border-gray-300 rounded disabled:opacity-75"
         placeholder={placeholder}
         disabled={disabled}
+        defaultValue={defaultValue}
       />
     </>
   );

@@ -12,6 +12,8 @@ import NotesSidebar from "../../ui/NotesSidebar";
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
   const [notes, setNotes] = useState<userNotes[]>([]);
+  const [currentNote, setCurrentNote] = useState<userNotes>({} as userNotes);
+  const [editMode, setEditMode] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
@@ -43,6 +45,7 @@ const Dashboard = () => {
 
         if (!ignore) {
           setNotes(notes);
+          setCurrentNote(notes[0]);
           setIsLoading(false);
         }
       } catch (error) {
@@ -71,20 +74,49 @@ const Dashboard = () => {
     <LoadingSplash />
   ) : isAuthenticated === null || !isAuthenticated ? (
     <LostPage />
-  ) : (
+  ) : editMode === true ? (
     <>
       <DashboardLayout>
-        <NotesSidebar notes={notes} error={error} />
+        <NotesSidebar
+          notes={notes}
+          error={error}
+          editMode={editMode}
+          setEditMode={setEditMode}
+          setCurrentNote={setCurrentNote}
+        />
         <section
           id="main-notes-view"
           className="flex flex-col h-full bg-white dark:bg-gray-900 items-center w-full"
         >
           <div className="flex flex-col w-full h-full width-container py-16 md:py-10 px-8 sm:px-14">
-            <NoteEditForm />
+            <NoteEditForm setEditMode={setEditMode} currentNote={currentNote} />
           </div>
         </section>
       </DashboardLayout>
     </>
+  ) : (
+    <DashboardLayout>
+      <NotesSidebar
+        notes={notes}
+        error={error}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        setCurrentNote={setCurrentNote}
+      />
+      <section
+        id="main-notes-view"
+        className="flex flex-col h-full bg-white dark:bg-gray-900 items-center w-full"
+      >
+        <div className="flex flex-col w-full h-full width-container py-16 md:py-10 px-8 sm:px-14">
+          {notes.length > 0 && currentNote && (
+            <div id="current-note">
+              <h1>{currentNote.title}</h1>
+              <p> {currentNote.body}</p>
+            </div>
+          )}
+        </div>
+      </section>
+    </DashboardLayout>
   );
 };
 

@@ -1,16 +1,26 @@
-import { FaRegEdit } from "react-icons/fa";
 import { userNotes } from "../context/globalUserTypes";
 import { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
+import React from "react";
+import { FaRegEdit } from "react-icons/fa";
+import { LuAlertOctagon } from "react-icons/lu";
+
+type NotesSidebar = {
+  notes: userNotes[];
+  error?: string;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentNote: React.Dispatch<React.SetStateAction<userNotes>>;
+};
 
 const NotesSidebar = ({
   notes,
   error,
-}: {
-  notes: userNotes[];
-  error?: string;
-}) => {
+  editMode,
+  setEditMode,
+  setCurrentNote,
+}: NotesSidebar) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = (
@@ -22,6 +32,40 @@ const NotesSidebar = ({
       setSidebarOpen(true);
     } else {
       setSidebarOpen(false);
+    }
+  };
+
+  const handleClickDispatch = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    whichButtonEvent: "edit" | "current"
+  ) => {
+    e.preventDefault();
+    const dataIndex = Number(e.currentTarget.getAttribute("data-index"));
+
+    if (e.currentTarget.getAttribute("data-index") === null) {
+      console.log("No data index");
+      return;
+    } else {
+      switch (whichButtonEvent) {
+        case "edit":
+          if (editMode === false) {
+            setEditMode(true);
+          }
+          if (sidebarOpen === true) {
+            setSidebarOpen(false);
+          }
+          setCurrentNote(notes[dataIndex]);
+          break;
+        case "current":
+          if (editMode === true) {
+            setEditMode(false);
+          }
+          if (sidebarOpen === true) {
+            setSidebarOpen(false);
+          }
+          setCurrentNote(notes[dataIndex]);
+          break;
+      }
     }
   };
 
@@ -61,16 +105,23 @@ const NotesSidebar = ({
           return (
             <li className="note-list-item" key={note?.id}>
               <div className="flex border-t border-b border-gray-400">
-                <div className="py-4 px-4 hover:bg-gray-400 w-full">
+                <button
+                  type="button"
+                  className="text-left py-4 px-4 hover:bg-gray-400 w-full"
+                  onClick={(e) => handleClickDispatch(e, "current")}
+                  data-index={notes.indexOf(note)}
+                >
                   <h4 className="font-bold" aria-describedby="note title">
                     {note?.title}
                   </h4>
                   <p aria-describedby="note body">{note?.body}</p>
-                </div>
+                </button>
                 <button
                   type="button"
                   aria-describedby="edit button"
                   className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
+                  onClick={(e) => handleClickDispatch(e, "edit")}
+                  data-index={notes.indexOf(note)}
                 >
                   <FaRegEdit size={24} aria-describedby="edit button" />
                 </button>
@@ -89,10 +140,31 @@ const NotesSidebar = ({
           : "sidebar-close flex flex-col h-full bg-gray-300 text-black p-10 lg:p-10 md:py-10 md:px-5"
       }
     >
-      <button onClick={(e) => toggleSidebar("open", e)}>OPEN</button>
-      <button onClick={(e) => toggleSidebar("close", e)}>X</button>
+      <div id="sidebar-button-container">
+        <button
+          type="button"
+          id="sidebar-close"
+          className="md:hidden"
+          aria-describedby="close sidebar"
+          onClick={(e) => toggleSidebar("close", e)}
+        >
+          <IoMdClose size={40} />
+        </button>
+        <button
+          type="button"
+          id="sidebar-open"
+          className="md:hidden bg-gray-300 rounded-r-sm p-3"
+          aria-describedby="open sidebar"
+          onClick={(e) => toggleSidebar("open", e)}
+        >
+          <GiHamburgerMenu size={25} />
+        </button>
+      </div>
 
-      <p aria-describedby="error">{error}</p>
+      <p aria-describedby="error" className="flex items-center text-red-700">
+        <LuAlertOctagon className="inline mr-2" size={20} />
+        {` ${error}. Please try reloading the page.`}
+      </p>
     </aside>
   );
 };
