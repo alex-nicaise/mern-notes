@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import React from "react";
 import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { LuAlertOctagon } from "react-icons/lu";
+import Button from "./Button";
 
 type NotesSidebar = {
   notes: userNotes[];
@@ -101,43 +102,53 @@ const NotesSidebar = ({
 
       <h2 className="text-xl font-bold mb-8">Notes</h2>
       <ul>
-        {notes.map((note) => {
-          return (
-            <li className="note-list-item" key={note?.id}>
-              <div className="flex border-t border-b border-gray-400">
-                <button
-                  type="button"
-                  className="text-left py-4 px-4 hover:bg-gray-400 w-full"
-                  onClick={(e) => handleClickDispatch(e, "current")}
-                  data-index={notes.indexOf(note)}
-                >
-                  <h4 className="font-bold" aria-describedby="note title">
-                    {note?.title}
-                  </h4>
-                  <p aria-describedby="note body">{note?.body}</p>
-                </button>
-                <button
-                  type="button"
-                  aria-describedby="edit button"
-                  className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
-                  onClick={(e) => handleClickDispatch(e, "edit")}
-                  data-index={notes.indexOf(note)}
-                >
-                  <FaRegEdit size={24} />
-                </button>
-                <button
-                  type="button"
-                  aria-describedby="delete button"
-                  className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
-                  data-index={notes.indexOf(note)}
-                >
-                  <FaRegTrashAlt size={24} />
-                </button>
-              </div>
-            </li>
-          );
-        })}
+        {notes.length > 0 ? (
+          notes.map((note) => {
+            return (
+              <li className="note-list-item" key={note?.id}>
+                <div className="flex border-t border-b border-gray-400">
+                  <button
+                    type="button"
+                    className="text-left py-4 px-4 hover:bg-gray-400 w-full"
+                    onClick={(e) => handleClickDispatch(e, "current")}
+                    data-index={notes.indexOf(note)}
+                  >
+                    <h4 className="font-bold" aria-describedby="note title">
+                      {note?.title}
+                    </h4>
+                    <p aria-describedby="note body">{note?.body}</p>
+                  </button>
+                  <button
+                    type="button"
+                    aria-describedby="edit button"
+                    className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
+                    onClick={(e) => handleClickDispatch(e, "edit")}
+                    data-index={notes.indexOf(note)}
+                  >
+                    <FaRegEdit size={24} />
+                  </button>
+                  <button
+                    type="button"
+                    aria-describedby="delete button"
+                    className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
+                    data-index={notes.indexOf(note)}
+                  >
+                    <FaRegTrashAlt size={24} />
+                  </button>
+                </div>
+              </li>
+            );
+          })
+        ) : (
+          <p>
+            Looks like you have no notes! Let's fix that - Click the "Create"
+            Button.
+          </p>
+        )}
       </ul>
+      <Button alt="primary" type="button" extraClasses="mt-6">
+        Create
+      </Button>
     </aside>
   ) : (
     <aside
