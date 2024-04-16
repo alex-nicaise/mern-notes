@@ -10,7 +10,7 @@
 }
 
 #notes-list-sidebar li button {
-  transition: var(--transition-bg);
+  transition: var(--transition-bg), var(--transition-text);
 }
 
 textarea[name="note-body"] {

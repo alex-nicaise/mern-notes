@@ -113,10 +113,15 @@ const NotesSidebar = ({
                     onClick={(e) => handleClickDispatch(e, "current")}
                     data-index={notes.indexOf(note)}
                   >
-                    <h4 className="font-bold" aria-describedby="note title">
+                    <h4
+                      className="font-bold"
+                      aria-describedby="sidebar note title"
+                    >
                       {note?.title}
                     </h4>
-                    <p aria-describedby="note body">{note?.body}</p>
+                    <span aria-describedby="sidebar note body">
+                      {note?.body}
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -130,7 +135,7 @@ const NotesSidebar = ({
                   <button
                     type="button"
                     aria-describedby="delete button"
-                    className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
+                    className="hover:bg-red-600 hover:text-white px-4 flex flex-grow justify-center items-center w-28"
                     data-index={notes.indexOf(note)}
                   >
                     <FaRegTrashAlt size={24} />

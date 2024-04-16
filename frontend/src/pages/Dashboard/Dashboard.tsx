@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getStorage } from "../../utils/localStorage";
 import { userNotes } from "../../context/globalUserTypes";
 import NotesSidebar from "../../ui/NotesSidebar";
+import formatDate from "../../utils/formatDate";
 
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
@@ -110,8 +111,22 @@ const Dashboard = () => {
         <div className="flex flex-col w-full h-full width-container py-16 md:py-10 px-8 sm:px-14">
           {notes.length > 0 && currentNote && (
             <div id="current-note">
-              <h1>{currentNote.title}</h1>
-              <p> {currentNote.body}</p>
+              <div className="mt-4 md:mt-0 mb-12 lg:flex lg:justify-between lg:">
+                <h1
+                  aria-describedby="note title"
+                  className="text-3xl font-bold"
+                >
+                  {currentNote.title}
+                </h1>
+                <span
+                  aria-describedby="note updated at"
+                  className="mt-4 text-gray-400"
+                >
+                  Updated at: {formatDate(currentNote.updated_at)}
+                </span>
+              </div>
+
+              <span aria-describedby="note body">{currentNote.body}</span>
             </div>
           )}
         </div>
