@@ -3,7 +3,7 @@ import { useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdClose } from "react-icons/io";
 import React from "react";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaRegTrashAlt } from "react-icons/fa";
 import { LuAlertOctagon } from "react-icons/lu";
 
 type NotesSidebar = {
@@ -123,7 +123,15 @@ const NotesSidebar = ({
                   onClick={(e) => handleClickDispatch(e, "edit")}
                   data-index={notes.indexOf(note)}
                 >
-                  <FaRegEdit size={24} aria-describedby="edit button" />
+                  <FaRegEdit size={24} />
+                </button>
+                <button
+                  type="button"
+                  aria-describedby="delete button"
+                  className="hover:bg-gray-400 px-4 flex flex-grow justify-center items-center w-28"
+                  data-index={notes.indexOf(note)}
+                >
+                  <FaRegTrashAlt size={24} />
                 </button>
               </div>
             </li>
