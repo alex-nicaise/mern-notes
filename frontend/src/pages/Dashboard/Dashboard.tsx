@@ -9,6 +9,7 @@ import { getStorage } from "../../utils/localStorage";
 import { userNotes } from "../../context/globalUserTypes";
 import NotesSidebar from "../../ui/NotesSidebar";
 import formatDate from "../../utils/formatDate";
+import fetchLink from "../../utils/fetchLink";
 
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
@@ -23,26 +24,17 @@ const Dashboard = () => {
     const getNotes = async () => {
       let ignore = false;
       try {
-        const url = "http://localhost:4000/api/notes/get-current/";
         const token = getStorage("token");
 
         if (token === null) {
           throw new Error("Authorization token not found");
         }
 
-        const response = await fetch(url, {
+        const { notes } = await fetchLink({
+          url: "http://localhost:4000/api/notes/get-current",
           method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          token: token,
         });
-
-        if (response.status !== 200) {
-          throw new Error("Connection to server failed");
-        }
-        const { notes } = await response.json();
 
         if (!ignore) {
           setNotes(notes);
