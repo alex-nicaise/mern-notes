@@ -8,6 +8,7 @@ import LabelInput from "../../ui/LabelInput";
 import { setStorage } from "../../utils/localStorage";
 import { validateForms, zodErrorsType } from "../../utils/validateForms";
 import useGlobalContext from "../../context/useGlobalContext";
+import fetchLink from "../../utils/fetchLink";
 
 const SignIn = () => {
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
@@ -44,21 +45,12 @@ const SignIn = () => {
       // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
       const url = "http://localhost:4000/api/users/login";
 
-      const response = await fetch(url, {
+      const data = await fetchLink({
+        url: url,
         method: "POST",
-        mode: "cors",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
-      if (response.status !== 200) {
-        throw new Error(data.error);
-      }
 
       // Set local storage for auth
       const { token, user } = data;

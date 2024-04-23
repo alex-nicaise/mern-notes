@@ -1,3 +1,4 @@
+import fetchLink from "./fetchLink";
 import { getStorage } from "./localStorage";
 
 type authenticateResponseType = {
@@ -16,27 +17,20 @@ const authenticateUser = async (): Promise<authenticateResponseType> => {
 
   const url = "http://localhost:4000/api/users/authenticate";
 
-  const authResponse = await fetch(url, {
+  const data = await fetchLink({
+    url: url,
     method: "POST",
-    mode: "cors",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    token: token,
   });
 
-  if (authResponse.status !== 200) {
-    throw new Error("Failed to authenticate user");
-  }
+  const { newToken } = data;
 
-  const { newToken } = await authResponse.json();
-
-  if (newToken) {
+  if (newToken === null) {
+    return { message: "Not authenticated" };
+  } else {
     return { message: "User authenticated", newToken: newToken };
   }
-
-  return { message: "User authenticated" };
 };
 
 export default authenticateUser;

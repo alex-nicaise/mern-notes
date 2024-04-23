@@ -8,6 +8,7 @@ import LabelInput from "../../ui/LabelInput";
 import { zodErrorsType } from "../../utils/validateForms";
 import { validateForms } from "../../utils/validateForms";
 import useGlobalContext from "../../context/useGlobalContext";
+import fetchLink from "../../utils/fetchLink";
 
 const SignUp = () => {
   const [zodErrors, setZodErrors] = useState<zodErrorsType>({});
@@ -43,20 +44,12 @@ const SignUp = () => {
     try {
       // Request URL (DO NOT FORGET TO SEND OVER HTTPS)
       const url = "http://localhost:4000/api/users/create";
-      const response = await fetch(url, {
+
+      const data = await fetchLink({
+        url: url,
         method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
-      if (response.status !== 200) {
-        throw new Error(data.error);
-      }
 
       // Set Loading to false
       setIsLoading(false);

@@ -24,14 +24,15 @@ const Dashboard = () => {
     const getNotes = async () => {
       let ignore = false;
       try {
-        const token = getStorage("token");
+        const url = "http://localhost:4000/api/notes/get-current";
 
+        const token = getStorage("token");
         if (token === null) {
           throw new Error("Authorization token not found");
         }
 
         const { notes } = await fetchLink({
-          url: "http://localhost:4000/api/notes/get-current",
+          url: url,
           method: "POST",
           token: token,
         });

@@ -3,6 +3,7 @@ import Button from "./Button";
 import { removeStorage } from "../utils/localStorage";
 import { useNavigate } from "react-router-dom";
 import useAuthContext from "../context/useGlobalContext";
+import fetchLink from "../utils/fetchLink";
 
 const LogOut = () => {
   const navigate = useNavigate();
@@ -10,19 +11,19 @@ const LogOut = () => {
   const handleLogOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Hit api route to delete refreshToken cookie
-    const url = "http://localhost:4000/api/users/logout";
-    const logOutResponse = await fetch(url, {
-      method: "POST",
-      mode: "cors",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      // Hit api route to delete refreshToken cookie
+      const url = "http://localhost:4000/api/users/logout";
 
-    if (logOutResponse.status !== 200) {
-      console.error("Failed to delete cookie on log out");
+      await fetchLink({
+        url: url,
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
 
     // Remove user from local storage

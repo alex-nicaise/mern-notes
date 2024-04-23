@@ -26,18 +26,32 @@ const fetchLink = async ({
       ...options.headers,
       Authorization: `Bearer ${token}`,
     };
-  } else if (body) {
+  }
+  if (body) {
     options.body = body;
-  } else if (credentials) {
+  }
+  if (credentials) {
     options.credentials = credentials;
   }
 
   const response = await fetch(url, options);
+  const data = await response.json();
 
   if (response.status !== 200) {
-    throw new Error("Connection to server failed");
+    let error;
+
+    if (url.includes("users/login") || url.includes("users/create")) {
+      error = new Error(data.error);
+    } else if (url.includes("logout")) {
+      error = new Error("Failed to delete cookie on log out");
+    } else if (url.includes("users/authenticate")) {
+      error = new Error("Failed to authenticate user");
+    } else {
+      error = new Error("Connection to server failed");
+    }
+
+    throw error;
   }
-  const data = await response.json();
 
   return data;
 };
