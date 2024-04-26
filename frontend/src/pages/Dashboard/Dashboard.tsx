@@ -5,11 +5,10 @@ import LostPage from "../../ui/LostPage";
 import LoadingSplash from "../../ui/LoadingSplash";
 import NoteEditForm from "../../ui/NoteEditForm";
 import { useNavigate } from "react-router-dom";
-import { getStorage } from "../../utils/localStorage";
 import { userNotes } from "../../context/globalUserTypes";
 import NotesSidebar from "../../ui/NotesSidebar";
 import formatDate from "../../utils/formatDate";
-import fetchLink from "../../utils/fetchLink";
+import getNotesFromServer from "../../utils/getNotesFromServer";
 
 const Dashboard = () => {
   const { isLoading, setIsLoading, isAuthenticated } = useGlobalContext();
@@ -21,47 +20,28 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getNotes = async () => {
-      let ignore = false;
+    const getNotesForSidebar = async () => {
       try {
-        const url = "http://localhost:4000/api/notes/get-current";
+        const notes = await getNotesFromServer();
 
-        const token = getStorage("token");
-        if (token === null) {
-          throw new Error("Authorization token not found");
-        }
-
-        const { notes } = await fetchLink({
-          url: url,
-          method: "POST",
-          token: token,
-        });
-
-        if (!ignore) {
-          setNotes(notes);
-          setCurrentNote(notes[0]);
-          setIsLoading(false);
-        }
+        setNotes(notes);
+        setCurrentNote(notes[0]);
+        setIsLoading(false);
       } catch (error) {
         if (error instanceof Error) {
           if (error.message === "Authorization token not found") {
             setIsLoading(false);
             navigate("/");
             return;
-          }
-          if (!ignore) {
+          } else {
             setError(error.message);
             setIsLoading(false);
           }
         }
       }
-
-      return () => {
-        ignore = true;
-      };
     };
 
-    getNotes();
+    getNotesForSidebar();
   }, [navigate, setIsLoading]);
 
   return isLoading ? (

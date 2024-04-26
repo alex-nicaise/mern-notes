@@ -15,9 +15,9 @@ const authTokens = (token, refreshToken) => {
       userTokenDecoded, // decoded user id
       `${60_000 * 15}` // 15 minutes
     );
-    return { newToken };
+    return { newToken, userId: userTokenDecoded };
   } else {
-    return { message: "User authenticated" };
+    return { userId: userTokenDecoded, message: "User authenticated" };
   }
 };
 

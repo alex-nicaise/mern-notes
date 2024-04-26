@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { userNotes } from "../context/globalUserTypes";
 import Button from "./Button";
 import LabelInput from "./LabelInput";
+import fetchLink from "../utils/fetchLink";
+import { getStorage } from "../utils/localStorage";
 
 type NoteEditForm = {
   setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,15 +22,48 @@ const NoteEditForm = ({ setEditMode, currentNote }: NoteEditForm) => {
     setEditMode(false);
   };
 
-  const handleSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSaveClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setEditMode(false);
+
+    try {
+      const url = `http://localhost:4000/api/notes/update/${currentNote.id}`;
+      const { noteTitle, noteBody } = e.currentTarget;
+
+      const token = getStorage("token");
+      if (token === null) {
+        throw new Error("Authorization token not found");
+      }
+
+      const response = await fetchLink({
+        url: url,
+        method: "PUT",
+        token: token,
+        body: JSON.stringify({
+          title: noteTitle.value,
+          body: noteBody.value,
+        }),
+      });
+
+      if (response.status !== 200) {
+        const { error } = await response.json();
+        throw new Error(error);
+      }
+
+      setEditMode(false);
+    } catch (error) {
+      console.log(error);
+      setEditMode(false);
+    }
   };
 
   return (
-    <form id="edit-form" className="w-full h-full max-w-4xl flex flex-col">
+    <form
+      id="edit-form"
+      className="w-full h-full max-w-4xl flex flex-col"
+      onSubmit={(e) => handleSaveClick(e)}
+    >
       <LabelInput
-        name="title"
+        name="noteTitle"
         type="text"
         label="Title"
         placeholder="Title"
@@ -39,13 +74,13 @@ const NoteEditForm = ({ setEditMode, currentNote }: NoteEditForm) => {
       </label>
       <textarea
         form="edit-form"
-        name="note-body"
+        name="noteBody"
         className="w-full flex-grow p-3 border border-gray-300 rounded-md"
         placeholder="Jot down your thoughts..."
         defaultValue={editNote.body}
       ></textarea>
       <div className="mt-8 flex gap-3">
-        <Button alt="primary" type="submit" onClick={handleSaveClick}>
+        <Button alt="primary" type="submit">
           Save
         </Button>
         <Button alt="ghost" type="button" onClick={handleCancelClick}>
